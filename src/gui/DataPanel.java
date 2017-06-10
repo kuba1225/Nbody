@@ -13,9 +13,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +24,8 @@ import javax.swing.table.DefaultTableModel;
  * @author Kuba
  */
 public class DataPanel extends javax.swing.JPanel {
+
+    static public int bodyNumber=0;
 
     /**
      * Creates new form DataPanel
@@ -268,8 +269,8 @@ public class DataPanel extends javax.swing.JPanel {
                 plik.close();
             }
         }
-        duration = parseDouble(DurationTextField.getText());/////////////////////!!!!!!!!!!!!!!!WYJĄTEK GDY NIC NIE PODAMY
-        timeStep = parseDouble(TimeStepTextField.getText());/////////////////////!!!!!!!!!!!!!!!WYJĄTEK GDY NIC NIE PODAMY
+        duration = parseInt(DurationTextField.getText());/////////////////////!!!!!!!!!!!!!!!WYJĄTEK GDY NIC NIE PODAMY
+        timeStep = parseInt(TimeStepTextField.getText());/////////////////////!!!!!!!!!!!!!!!WYJĄTEK GDY NIC NIE PODAMY
 
         DurationTextField.setText("");
         TimeStepTextField.setText("");
@@ -330,6 +331,7 @@ public class DataPanel extends javax.swing.JPanel {
                     }
                 }
                 tableModel.addRow(tab);
+                bodyNumber++;
             }
 
         } catch (IOException e) {
@@ -383,6 +385,6 @@ public class DataPanel extends javax.swing.JPanel {
     private javax.swing.JLabel ZVelocityLabel;
     private javax.swing.JTextField ZVelocityTextField;
     // End of variables declaration//GEN-END:variables
-    double timeStep;
-    double duration;
+    static public int timeStep;
+    static public int duration;
 }

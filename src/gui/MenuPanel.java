@@ -6,8 +6,8 @@
 package gui;
 
 import static gui.MainFrame.f;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
+import logic.Nbody;
 
 /**
  *
@@ -33,28 +33,33 @@ public class MenuPanel extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         MenuPanel = new javax.swing.JPanel();
-        ProgramNameLabel = new javax.swing.JLabel();
+        MenuCenterPanel = new javax.swing.JPanel();
+        MenuIconLabel = new javax.swing.JLabel();
         ButtonPanel = new javax.swing.JPanel();
         VisualizeButton = new javax.swing.JButton();
         InsertDataButton = new javax.swing.JButton();
         GenerateFileButton = new javax.swing.JButton();
         ExitButton = new javax.swing.JButton();
-        MenuIconLabel = new javax.swing.JLabel();
+        ProgramNameLabel = new javax.swing.JLabel();
 
         MenuPanel.setBackground(new java.awt.Color(0, 0, 0));
+        MenuPanel.setLayout(new java.awt.GridBagLayout());
 
-        ProgramNameLabel.setBackground(new java.awt.Color(0, 0, 0));
-        ProgramNameLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
-        ProgramNameLabel.setForeground(new java.awt.Color(255, 255, 255));
-        ProgramNameLabel.setText("                    Nbody");
+        MenuCenterPanel.setBackground(new java.awt.Color(0, 0, 0));
 
         ButtonPanel.setBackground(new java.awt.Color(0, 0, 0));
         ButtonPanel.setLayout(new java.awt.GridLayout(4, 1, 15, 50));
 
         VisualizeButton.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         VisualizeButton.setText("Wizualizuj");
+        VisualizeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                VisualizeButtonActionPerformed(evt);
+            }
+        });
         ButtonPanel.add(VisualizeButton);
 
         InsertDataButton.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
@@ -79,39 +84,51 @@ public class MenuPanel extends javax.swing.JPanel {
         });
         ButtonPanel.add(ExitButton);
 
-        javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
-        MenuPanel.setLayout(MenuPanelLayout);
-        MenuPanelLayout.setHorizontalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addGap(52, 52, 52)
-                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        ProgramNameLabel.setBackground(new java.awt.Color(0, 0, 0));
+        ProgramNameLabel.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        ProgramNameLabel.setForeground(new java.awt.Color(255, 255, 255));
+        ProgramNameLabel.setText("                    Nbody");
+
+        javax.swing.GroupLayout MenuCenterPanelLayout = new javax.swing.GroupLayout(MenuCenterPanel);
+        MenuCenterPanel.setLayout(MenuCenterPanelLayout);
+        MenuCenterPanelLayout.setHorizontalGroup(
+            MenuCenterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuCenterPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(MenuCenterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ProgramNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 351, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 101, Short.MAX_VALUE)
                 .addComponent(MenuIconLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 458, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
+                .addContainerGap())
         );
-        MenuPanelLayout.setVerticalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuPanelLayout.createSequentialGroup()
+        MenuCenterPanelLayout.setVerticalGroup(
+            MenuCenterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuCenterPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(MenuCenterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuCenterPanelLayout.createSequentialGroup()
                         .addComponent(ProgramNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(22, 22, 22)
                         .addComponent(ButtonPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 364, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(50, 50, 50))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MenuPanelLayout.createSequentialGroup()
-                        .addComponent(MenuIconLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(24, 24, 24))))
+                        .addGap(26, 26, 26))
+                    .addComponent(MenuIconLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 95;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 52, 12, 26);
+        MenuPanel.add(MenuCenterPanel, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(MenuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(MenuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 1000, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -124,11 +141,21 @@ public class MenuPanel extends javax.swing.JPanel {
         f.getContentPane().removeAll();
         f.add(dp);
         f.validate();
+        f.pack();
     }//GEN-LAST:event_InsertDataButtonActionPerformed
 
     private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
         System.exit(0);
     }//GEN-LAST:event_ExitButtonActionPerformed
+
+    private void VisualizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VisualizeButtonActionPerformed
+        Nbody nbody = new Nbody();
+        JPanel vp = new VisualisationPanel(nbody);
+        f.getContentPane().removeAll();
+        f.add(vp);
+        f.validate();
+        f.pack();
+    }//GEN-LAST:event_VisualizeButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -136,6 +163,7 @@ public class MenuPanel extends javax.swing.JPanel {
     private javax.swing.JButton ExitButton;
     private javax.swing.JButton GenerateFileButton;
     private javax.swing.JButton InsertDataButton;
+    private javax.swing.JPanel MenuCenterPanel;
     private javax.swing.JLabel MenuIconLabel;
     private javax.swing.JPanel MenuPanel;
     private javax.swing.JLabel ProgramNameLabel;

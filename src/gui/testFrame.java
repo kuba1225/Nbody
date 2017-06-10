@@ -5,38 +5,20 @@
  */
 package gui;
 
-import static gui.DataPanel.duration;
-import static gui.DataPanel.timeStep;
-import javax.swing.JFrame;
-import logic.Nbody;
+import static gui.MainFrame.f;
+import javax.swing.JPanel;
 
 /**
  *
  * @author Kuba
  */
-public class MainFrame extends javax.swing.JFrame {
-
-    static JFrame f = new JFrame("Nbody");
-    MenuPanel mp = new MenuPanel();
+public class testFrame extends javax.swing.JFrame {
 
     /**
-     * Creates new form MainFrame
+     * Creates new form testFrame
      */
-    public MainFrame() {
+    public testFrame() {
         initComponents();
-        f.add(mp);
-        f.pack();
-        f.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        f.setVisible(true);
-
-    }
-
-    public JFrame getF() {
-        return f;
-    }
-
-    public void setF(JFrame f) {
-        this.f = f;
     }
 
     /**
@@ -54,11 +36,11 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1000, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 516, Short.MAX_VALUE)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
@@ -81,18 +63,23 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(testFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         
+         JPanel vp = new testGraphPanel();
+       
+        f.add(vp);
+        f.validate();
+        f.pack();
         
         
         
@@ -100,8 +87,7 @@ public class MainFrame extends javax.swing.JFrame {
         
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainFrame();
-                
+                new testFrame().setVisible(true);
             }
         });
     }

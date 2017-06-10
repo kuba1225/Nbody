@@ -5,6 +5,10 @@
  */
 package logic;
 
+import static gui.DataPanel.duration;
+import static gui.DataPanel.timeStep;
+import gui.VisualisationPanel;
+
 /**
  *
  * @author Kuba
@@ -16,6 +20,6 @@ public class MainClass {
      * @param args
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+       
     }
 }

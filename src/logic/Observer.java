@@ -10,5 +10,6 @@ package logic;
  * @author Kuba
  */
 public interface Observer {
-    
+
+    public void update(double[][] coordinates);
 }
