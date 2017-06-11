@@ -9,7 +9,9 @@ import static gui.DataPanel.bodyNumber;
 import static java.lang.Math.sqrt;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import static java.lang.Double.parseDouble;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -25,6 +27,7 @@ public class Nbody implements Observed {
     private ArrayList<Observer> observators;
     public static final int DAY = 24 * 60 * 60;
     public static final double G = 6.67408e-11;
+    public static final int HOUR = 60 * 60;
 
     public Nbody() {
         observators = new ArrayList<Observer>();
@@ -57,6 +60,9 @@ public class Nbody implements Observed {
         int i, j, u;
         int l = 0;
 
+        pt *= DAY;
+        dt *= HOUR;
+
         double tmp = 0;
         double tmp2 = 0;
         double tmp3 = 0;
@@ -65,6 +71,13 @@ public class Nbody implements Observed {
         double nrm = 0;
 
         PlanetList pl = new PlanetList();
+        PrintWriter fileWrite = null;
+        try {
+            fileWrite = new PrintWriter(new FileWriter("results.txt"));
+
+        } catch (IOException e) {
+
+        }
 
         Scanner file = null;
         try {
@@ -87,6 +100,21 @@ public class Nbody implements Observed {
         double[][] c = new double[n][3];
         double[][] a = new double[n][3];
         double[][] mr = new double[n][3];
+        double[][] v = new double[n][3];
+        double[][] w = new double[n][3];
+        double[] m = new double[n];
+
+        for (i = 0; i < n; i++) {
+            m[i] = pl.getPlList().get(i).getMass();
+            w[i][0] = pl.getPlList().get(i).getCoordinates(0);
+            w[i][1] = pl.getPlList().get(i).getCoordinates(1);
+            w[i][2] = pl.getPlList().get(i).getCoordinates(2);
+            v[i][0] = pl.getPlList().get(i).getVelocity(0);
+            v[i][1] = pl.getPlList().get(i).getVelocity(1);
+            v[i][2] = pl.getPlList().get(i).getVelocity(2);
+            //System.out.println("m="+m[i]+" x="+w[i][0]+" y="+w[i][1]+" "
+            //        + "z="+w[i][2]+" vx="+v[i][0]+" vy="+v[i][1]+" vz="+v[i][2]);
+        }
 
         int t = 0;
         while (t < pt) {
@@ -99,46 +127,60 @@ public class Nbody implements Observed {
                 for (j = 0; j < n; j++) {
                     if (i != j) {
                         for (u = 0; u < 3; u++) {
-                            rr = pl.getPlList().get(i).getCoordinates(u) - pl.getPlList().get(j).getCoordinates(u);
+                            rr = w[i][u] - w[j][u];
                             mr[i][u] = rr;
                         }
                         nrm = norm(mr[i][0], mr[i][1], mr[i][2]);
                         for (u = 0; u < 3; u++) {
-                            r = pl.getPlList().get(i).getCoordinates(u) - pl.getPlList().get(j).getCoordinates(u);
-                            tmp = ((-G * pl.getPlList().get(j).getMass()) / (nrm * nrm)) * (r / nrm);
-                            a[i][u] = tmp;
+
+                            tmp = (((G) * m[j]) / (nrm * nrm)) * (mr[i][u] / nrm);
+                            a[i][u] = a[i][u] - tmp;
                         }
                     }
                 }
                 for (u = 0; u < 3; u++) {
-                    tmp2 = pl.getPlList().get(i).getVelocity(u) + a[i][u] * dt;
+                    tmp2 = v[i][u] + a[i][u] * dt;
+                    //System.out.println("Przed: "+pl.getPlList().get(i).getVelocity(u));
+                    v[i][u] = tmp2;
+                    //System.out.println("Po: "+pl.getPlList().get(i).getVelocity(u)+"  "+tmp2);
+                    tmp3 = w[i][u] + v[i][u] * dt;
 
-                    pl.getPlList().get(i).setVelocity(u, tmp2);
-
-                    tmp3 = pl.getPlList().get(i).getCoordinates(u) + pl.getPlList().get(i).getVelocity(u) * dt;
-
-                    pl.getPlList().get(i).setVelocity(u, tmp3);
+                    w[i][u] = tmp3;
                 }
 
             }
 
             for (u = 0; u < 3; u++) {
-                c[0][u] = pl.getPlList().get(0).getCoordinates(u);      //c - wspolrzedne sledzonego ciala	
+                c[0][u] = w[0][u];      //c - wspolrzedne sledzonego ciala	
             }
 
             for (i = 0; i < n; i++, l++) {
-                coordinates[i][0] = pl.getPlList().get(i).getCoordinates(0) - c[0][0];
-                coordinates[i][1] = pl.getPlList().get(i).getCoordinates(1) - c[0][1];
-                coordinates[i][2] = pl.getPlList().get(i).getCoordinates(2) - c[0][2];
-                //System.out.println(coordinates[i][0]);
-                //System.out.println(coordinates[i][1]);
-                //System.out.println(coordinates[i][2]);
+                coordinates[i][0] = w[i][0] - c[0][0];
+                coordinates[i][1] = w[i][1] - c[0][1];
+                coordinates[i][2] = w[i][2] - c[0][2];
+                //System.out.print(coordinates[i][0]+" ");
+                //System.out.print(coordinates[i][1]+" ");
+                //System.out.print(coordinates[i][2]+" ");
             }
+            //System.out.println();
+            for (i = 0; i < n; i++, l++) {
+                fileWrite.println(coordinates[i][0] + " " + coordinates[i][1]);
+                //fileWrite.println();
+            }
+
             tellObserver();
+
+            for (i = 0; i < n; i++, l++) {
+                coordinates[i][0] = 0;
+                coordinates[i][1] = 0;
+                coordinates[i][2] = 0;
+            }
+
             t += dt;
 
         }
-        //write_to_file(wrc, out);
+        fileWrite.close();
+
     }
 
     public double[][] getResults() {

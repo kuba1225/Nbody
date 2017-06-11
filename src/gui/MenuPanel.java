@@ -150,7 +150,7 @@ public class MenuPanel extends javax.swing.JPanel {
 
     private void VisualizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VisualizeButtonActionPerformed
         Nbody nbody = new Nbody();
-        JPanel vp = new VisualisationPanel(nbody);
+        JPanel vp = new VisualisationPanel3(nbody);
         f.getContentPane().removeAll();
         f.add(vp);
         f.validate();

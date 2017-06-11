@@ -17,8 +17,6 @@ import java.io.IOException;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Timer;
 import logic.Nbody;
 
@@ -88,16 +86,16 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
                 .addGroup(OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         OptionPanelLayout.setVerticalGroup(
             OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OptionPanelLayout.createSequentialGroup()
-                .addGap(33, 33, 33)
+                .addGap(31, 31, 31)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addGap(18, 18, 18)
                 .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(386, Short.MAX_VALUE))
+                .addContainerGap(399, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -105,7 +103,7 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 791, Short.MAX_VALUE)
+                .addGap(0, 770, Short.MAX_VALUE)
                 .addComponent(OptionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
@@ -115,6 +113,9 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        nbody.findPosition("data.txt", "results.txt", 20, 10000);
+        
+        
         start = true;
         timer.start();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -140,12 +141,12 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
                 yw = coordinates[i][1];
             }
 
-            int xmax = this.getWidth()-OptionPanel.getWidth();
-            int ymax = this.getHeight();
+            int xmax = this.getWidth()-OptionPanel.getWidth()-10;
+            int ymax = this.getHeight()-10;
 
             coordinates2D[i][0] = (xmax / 2) + ((coordinates[i][0] / abs(xw)) * (xmax / 2));
             coordinates2D[i][1] = (ymax / 2) - ((coordinates[i][1] / abs(yw)) * (ymax / 2));
-            System.out.println("x = "+coordinates2D[i][0]+" y = "+coordinates2D[i][1]);
+            //System.out.println("x = "+coordinates2D[i][0]+" y = "+coordinates2D[i][1]);
         }
         repaint();
     }

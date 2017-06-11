@@ -15,102 +15,124 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
+import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import logic.Nbody;
 import logic.Observer;
+import logic.Planet;
 
 /**
  *
  * @author Kuba
  */
 public class VisualisationPanel extends javax.swing.JPanel implements Observer, ActionListener {
- 
+
     int n = 5;
     private double[][] coordinates;//= new double[n][3]
     private Nbody nbody;
     private double xw;
     private double yw;
     boolean start = false;
+    Timer timer;
+    Scanner file = null;
 
     private double[][] coordinates2D = new double[n][2];
     int licznik = 0;
 
     @Override
     public void update(double[][] coordinates) {
+
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < 3; j++) {
                 this.coordinates[i][j] = coordinates[i][j];
             }
         }
 
-        System.out.println(SwingUtilities.isEventDispatchThread());
-
-        System.out.println(GraphPanel.getHeight());
-
-        System.out.println(licznik + ". Aktualizuję współrzędne    ");
-        licznik++;
-        invalidate();
-        validate();
+        //System.out.println(licznik + ". Aktualizuję współrzędne    ");
+        //licznik++;
+        /*validate();
         repaint();
         try {
             TimeUnit.MILLISECONDS.sleep(200);
         } catch (InterruptedException ex) {
             Logger.getLogger(VisualisationPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        }*/
     }
-    
-     @Override
+
+    @Override
     public void actionPerformed(ActionEvent e) {
-        if (start) {
+        int dt = 1;
+        int pt = 1440;
+        for (int t = 0; t < pt; t += 20) {
             for (int i = 0; i < n; i++) {
-                if (xw < coordinates[i][0]) {
-                    xw = coordinates[i][0];
-                }
-                if (yw < coordinates[i][1]) {
-                    yw = coordinates[i][1];
-                }
-
-                int xmax = GraphPanel.getWidth();
-                int ymax = GraphPanel.getHeight();
-
-                for (int it = 0; it < n; it++) {
-                    coordinates2D[it][0] = (xmax / 2) + ((coordinates[it][0] / abs(xw)) * (xmax / 2));
-                    coordinates2D[it][1] = (ymax / 2) - ((coordinates[it][1] / abs(yw)) * (ymax / 2));
-                    // System.out.println("Konwertuję współrzędne: x=\"" + coordinates2D[it][0] + "\"" + "  y=\"" + coordinates2D[it][1] + "\"");
-                }
-
-                //System.out.println("test");
+                coordinates[i][0] = parseDouble(file.next());
+                coordinates[i][1] = parseDouble(file.next());
+                //System.out.println("Odczytałem : " + coordinates[i][0] + " " + coordinates[i][1]);
             }
-            
+            System.out.println();
+
+            if (start) {
+                for (int i = 0; i < n; i++) {
+                    if (xw < coordinates[i][0]) {
+                        xw = coordinates[i][0];
+                    }
+                    if (yw < coordinates[i][1]) {
+                        yw = coordinates[i][1];
+                    }
+
+                    int xmax = GraphPanel.getWidth();
+                    int ymax = GraphPanel.getHeight();
+
+                    coordinates2D[i][0] = (xmax / 2) + ((coordinates[i][0] / abs(xw)) * (xmax / 2));
+                    coordinates2D[i][1] = (ymax / 2) - ((coordinates[i][1] / abs(yw)) * (ymax / 2));
+
+                    //coordinates2D[i][0] -= 20;
+                    //coordinates2D[i][1] -= 20;
+                    //System.out.println("Konwertuję współrzędne: x=\"" + coordinates2D[i][0] + "\"" + "  y=\"" + coordinates2D[i][1] + "\"");
+                    //System.out.println("test");
+                }
+                repaint();
+
+            }
         }
+        timer.stop();
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        System.out.println("test");
+        //System.out.println("test");
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) GraphPanel.getGraphics();
+        if (start) {
+            Graphics2D g2d = (Graphics2D) GraphPanel.getGraphics();
 
-        g2d.setColor(Color.WHITE);
-        g2d.fillRect(0, 0, GraphPanel.getWidth(), GraphPanel.getHeight());
-        g2d.setColor(Color.BLACK);
-        drawCircle(g2d);
-
+            //g2d.setColor(Color.WHITE);
+            //g2d.fillRect(0, 0, GraphPanel.getWidth(), GraphPanel.getHeight());
+            g2d.setColor(Color.BLACK);
+            drawCircle(g2d);
+        }
     }
-    
-  
+
     private void drawCircle(Graphics2D g2d) {
         int x, y;
+
         for (int i = 0; i < n; i++) {
             x = (int) coordinates2D[i][0];
             y = (int) coordinates2D[i][1];
-            Ellipse2D.Double circle = new Ellipse2D.Double(x, y, 10, 10);
+            System.out.println("Maluje w punkcie: x="+x+"  y="+y);
+            Ellipse2D.Double circle = new Ellipse2D.Double(x, y, 20, 20);
             g2d.fill(circle);
         }
     }
@@ -190,15 +212,24 @@ public class VisualisationPanel extends javax.swing.JPanel implements Observer, 
         start = true;
         int dt = timeStep;
         int pt = duration;
-        System.out.println(this.GraphPanel.getHeight() + "  " + this.GraphPanel.getWidth());
+        //System.out.println(this.GraphPanel.getHeight() + "  " + this.GraphPanel.getWidth());
         nbody.addObserver(this);
-        
-        
+
+        try {
+            file = new Scanner(new BufferedReader(new FileReader("rozw.txt")));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(VisualisationPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         //SwingUtilities.invokeLater(new Runnable() {
-           // public void run() {
-                nbody.findPosition("data.txt", "results.txt", 20, 1000);
-            //}
+        // public void run() {
+        nbody.findPosition("data.txt", "results.txt", 2, 10000);
+        //}
         //});
+
+        timer = new Timer(5000, this);
+
+        timer.start();
 
 
     }//GEN-LAST:event_StartButtonActionPerformed
@@ -208,7 +239,5 @@ public class VisualisationPanel extends javax.swing.JPanel implements Observer, 
     private javax.swing.JPanel GraphPanel;
     private javax.swing.JButton StartButton;
     // End of variables declaration//GEN-END:variables
-
-   
 
 }
