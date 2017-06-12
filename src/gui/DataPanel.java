@@ -293,6 +293,8 @@ public class DataPanel extends javax.swing.JPanel {
         tableModel.addRow(new Object[]{NameTextField.getText(), MassTextField.getText(), XCoordinateTextField.getText(), YCoordinateTextField.getText(), ZCoordinateTextField.getText(),
             XVelocityTextField.getText(), YVelocityTextField.getText(), ZVelocityTextField.getText()});
 
+        bodyNumber++;    
+        
         NameTextField.setText("");
         MassTextField.setText("");
         XCoordinateTextField.setText("");
@@ -307,7 +309,7 @@ public class DataPanel extends javax.swing.JPanel {
         DefaultTableModel tableModel = (DefaultTableModel) PlanetDataTable.getModel();
         if (tableModel.getRowCount() > 0) {
             tableModel.removeRow(tableModel.getRowCount() - 1);
-
+            bodyNumber--;
         }
     }//GEN-LAST:event_RemoveButtonActionPerformed
 

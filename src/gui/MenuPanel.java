@@ -6,6 +6,7 @@
 package gui;
 
 import static gui.MainFrame.f;
+import java.awt.Color;
 import javax.swing.JPanel;
 import logic.Nbody;
 
@@ -41,7 +42,7 @@ public class MenuPanel extends javax.swing.JPanel {
         ButtonPanel = new javax.swing.JPanel();
         VisualizeButton = new javax.swing.JButton();
         InsertDataButton = new javax.swing.JButton();
-        GenerateFileButton = new javax.swing.JButton();
+        Settings = new javax.swing.JButton();
         ExitButton = new javax.swing.JButton();
         ProgramNameLabel = new javax.swing.JLabel();
 
@@ -71,9 +72,14 @@ public class MenuPanel extends javax.swing.JPanel {
         });
         ButtonPanel.add(InsertDataButton);
 
-        GenerateFileButton.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        GenerateFileButton.setText("Wygeneruj plik");
-        ButtonPanel.add(GenerateFileButton);
+        Settings.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        Settings.setText("Ustawienia");
+        Settings.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SettingsActionPerformed(evt);
+            }
+        });
+        ButtonPanel.add(Settings);
 
         ExitButton.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         ExitButton.setText("Wyjście");
@@ -157,16 +163,24 @@ public class MenuPanel extends javax.swing.JPanel {
         f.pack();
     }//GEN-LAST:event_VisualizeButtonActionPerformed
 
+    private void SettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SettingsActionPerformed
+        JPanel sp = new SettingsPanel();
+        f.getContentPane().removeAll();
+        f.add(sp);
+        f.validate();
+        f.pack();
+    }//GEN-LAST:event_SettingsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ButtonPanel;
     private javax.swing.JButton ExitButton;
-    private javax.swing.JButton GenerateFileButton;
     private javax.swing.JButton InsertDataButton;
     private javax.swing.JPanel MenuCenterPanel;
     private javax.swing.JLabel MenuIconLabel;
     private javax.swing.JPanel MenuPanel;
     private javax.swing.JLabel ProgramNameLabel;
+    private javax.swing.JButton Settings;
     private javax.swing.JButton VisualizeButton;
     // End of variables declaration//GEN-END:variables
 }

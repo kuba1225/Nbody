@@ -5,20 +5,29 @@
  */
 package gui;
 
+import static gui.DataPanel.bodyNumber;
+import static gui.DataPanel.duration;
+import static gui.DataPanel.timeStep;
+import static gui.MainFrame.f;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
+import java.net.URL;
 import java.util.Scanner;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import logic.Nbody;
+import static logic.Nbody.pl;
 
 /**
  *
@@ -26,18 +35,29 @@ import logic.Nbody;
  */
 public class VisualisationPanel3 extends javax.swing.JPanel implements ActionListener {
 
-    int n = 5;
+    boolean checkIfFirst = true;
+    boolean startStop = true;
+    int n = bodyNumber;
     private double[][] coordinates;
-    private double[][] coordinates2D = new double[n][3];
+    private double[][] coordinates2D = new double[n][2];
     private Nbody nbody;
     boolean start = false;
     Timer timer = new Timer(40, this);
     double xw, yw;
     Scanner file = null;
+    private BufferedImage image;
+    static URL resource = null;
 
     public VisualisationPanel3(Nbody nbody) {
+        if (resource != null) {
+            try {
+                image = ImageIO.read(resource);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         initComponents();
-        coordinates = new double[n][3];
+        coordinates = new double[n][2];
         this.nbody = nbody;
         try {
             file = new Scanner(new BufferedReader(new FileReader("results.txt")));
@@ -54,26 +74,22 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         OptionPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        MenuButton = new javax.swing.JButton();
+        StabilisationPanel = new javax.swing.JPanel();
+        StartStopButton = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(0, 0, 0));
+        setForeground(new java.awt.Color(255, 255, 255));
 
-        OptionPanel.setBackground(new java.awt.Color(0, 0, 0));
+        OptionPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        jButton1.setText("Start");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        MenuButton.setText("Menu");
+        MenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Stop");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                MenuButtonActionPerformed(evt);
             }
         });
 
@@ -83,47 +99,86 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
             OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OptionPanelLayout.createSequentialGroup()
                 .addGap(46, 46, 46)
-                .addGroup(OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))
+                .addComponent(MenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(46, Short.MAX_VALUE))
         );
         OptionPanelLayout.setVerticalGroup(
             OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OptionPanelLayout.createSequentialGroup()
-                .addGap(31, 31, 31)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(399, Short.MAX_VALUE))
+                .addGap(169, 169, 169)
+                .addComponent(MenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(334, Short.MAX_VALUE))
         );
+
+        StabilisationPanel.setOpaque(false);
+        StabilisationPanel.setLayout(new java.awt.GridBagLayout());
+
+        StartStopButton.setBackground(new java.awt.Color(0, 51, 255));
+        StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/playButton.png"))); // NOI18N
+        StartStopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StartStopButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = -31;
+        gridBagConstraints.ipady = -19;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 344, 0, 376);
+        StabilisationPanel.add(StartStopButton, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 770, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(StabilisationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(OptionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(OptionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(StabilisationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        nbody.findPosition("data.txt", "results.txt", 20, 10000);
-        
-        
-        start = true;
-        timer.start();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void StartStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartStopButtonActionPerformed
+        if (checkIfFirst) {
+            StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pauseButton.png")));
+            nbody.findPosition("data.txt", "results.txt", timeStep, duration);
+            checkIfFirst = false;
+        }
+        if (startStop) {
+            start = true;
+            StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pauseButton.png")));
+            timer.start();
+            startStop = false;
+        } else {
+            startStop = true;
+            StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/playButton.png")));
+            start = false;
+            timer.stop();
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        start = false;
-        timer.stop();
-    }//GEN-LAST:event_jButton2ActionPerformed
+        }
+
+
+    }//GEN-LAST:event_StartStopButtonActionPerformed
+
+    private void MenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuButtonActionPerformed
+        JPanel mp = new MenuPanel();
+        f.getContentPane().removeAll();
+        f.add(mp);
+        f.validate();
+        f.pack();
+        repaint();
+    }//GEN-LAST:event_MenuButtonActionPerformed
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -141,8 +196,8 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
                 yw = coordinates[i][1];
             }
 
-            int xmax = this.getWidth()-OptionPanel.getWidth()-10;
-            int ymax = this.getHeight()-10;
+            int xmax = this.getWidth() - OptionPanel.getWidth() - 20;
+            int ymax = this.getHeight() - 20;
 
             coordinates2D[i][0] = (xmax / 2) + ((coordinates[i][0] / abs(xw)) * (xmax / 2));
             coordinates2D[i][1] = (ymax / 2) - ((coordinates[i][1] / abs(yw)) * (ymax / 2));
@@ -163,18 +218,26 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
         if (start) {
             super.paintComponent(g2d);
             for (int i = 0; i < n; i++) {
+                g2d.setColor(Color.BLACK);
                 Graphics2D g22d = (Graphics2D) g2d;
-                g2d.setColor(Color.blue);
-                Ellipse2D.Double circle = new Ellipse2D.Double(coordinates2D[i][0], coordinates2D[i][1], 30, 30);
-                g22d.fill(circle);
+                g2d.setColor(Color.white);
+
+                if (resource == null) {
+                    Ellipse2D.Double circle = new Ellipse2D.Double(coordinates2D[i][0], coordinates2D[i][1], 30, 30);
+                    g22d.fill(circle);
+                } else {
+                    g2d.drawImage(image, (int) coordinates2D[i][0], (int) coordinates2D[i][1], this);
+                }
+                g2d.drawString(pl.getPlList().get(i).getName(), (int) coordinates2D[i][0] - 2, (int) coordinates2D[i][1] - 2);
             }
         }
     }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton MenuButton;
     private javax.swing.JPanel OptionPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JPanel StabilisationPanel;
+    private javax.swing.JButton StartStopButton;
     // End of variables declaration//GEN-END:variables
 }

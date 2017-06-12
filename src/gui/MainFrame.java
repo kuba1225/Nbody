@@ -18,6 +18,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     static JFrame f = new JFrame("Nbody");
     MenuPanel mp = new MenuPanel();
+    static String wybor = "Zwykły";
 
     /**
      * Creates new form MainFrame
@@ -49,6 +50,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(0, 0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);

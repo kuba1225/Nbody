@@ -22,13 +22,21 @@ import java.util.Scanner;
  */
 public class Nbody implements Observed {
 
-    int n = 5;//bodyNumber;
+    int n = bodyNumber;
     private double[][] coordinates;
     private ArrayList<Observer> observators;
     public static final int DAY = 24 * 60 * 60;
     public static final double G = 6.67408e-11;
     public static final int HOUR = 60 * 60;
+    public static PlanetList pl;
 
+    public static PlanetList getPl() {
+        return pl;
+    }
+    
+    
+    
+    
     public Nbody() {
         observators = new ArrayList<Observer>();
         coordinates = new double[n][3];
@@ -57,6 +65,9 @@ public class Nbody implements Observed {
     }
 
     public void findPosition(String fileIn, String fileOut, int dt, int pt) {
+        pl = new PlanetList();
+        
+        
         int i, j, u;
         int l = 0;
 
@@ -70,7 +81,7 @@ public class Nbody implements Observed {
         double rr = 0;
         double nrm = 0;
 
-        PlanetList pl = new PlanetList();
+        
         PrintWriter fileWrite = null;
         try {
             fileWrite = new PrintWriter(new FileWriter("results.txt"));
@@ -186,5 +197,6 @@ public class Nbody implements Observed {
     public double[][] getResults() {
         return coordinates;
     }
+    
 
 }

@@ -5,11 +5,9 @@
  */
 package gui;
 
-import static gui.DataPanel.bodyNumber;
 import static gui.DataPanel.duration;
 import static gui.DataPanel.timeStep;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -18,21 +16,14 @@ import java.awt.geom.Ellipse2D;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import logic.Nbody;
 import logic.Observer;
-import logic.Planet;
 
 /**
  *
@@ -60,16 +51,6 @@ public class VisualisationPanel extends javax.swing.JPanel implements Observer, 
                 this.coordinates[i][j] = coordinates[i][j];
             }
         }
-
-        //System.out.println(licznik + ". Aktualizuję współrzędne    ");
-        //licznik++;
-        /*validate();
-        repaint();
-        try {
-            TimeUnit.MILLISECONDS.sleep(200);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(VisualisationPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
     }
 
     @Override
@@ -80,7 +61,6 @@ public class VisualisationPanel extends javax.swing.JPanel implements Observer, 
             for (int i = 0; i < n; i++) {
                 coordinates[i][0] = parseDouble(file.next());
                 coordinates[i][1] = parseDouble(file.next());
-                //System.out.println("Odczytałem : " + coordinates[i][0] + " " + coordinates[i][1]);
             }
             System.out.println();
 
