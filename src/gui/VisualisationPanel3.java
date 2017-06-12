@@ -40,7 +40,7 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
         coordinates = new double[n][3];
         this.nbody = nbody;
         try {
-            file = new Scanner(new BufferedReader(new FileReader("rozw.txt")));
+            file = new Scanner(new BufferedReader(new FileReader("results.txt")));
         } catch (IOException ex) {
 
         }
