@@ -5,8 +5,10 @@
  */
 package gui;
 
+import static gui.DataPanel.isSaved;
 import static gui.MainFrame.f;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import logic.Nbody;
 
@@ -15,8 +17,6 @@ import logic.Nbody;
  * @author Kuba
  */
 public class MenuPanel extends javax.swing.JPanel {
-
-    
 
     /**
      * Creates new form MenuPanel
@@ -143,11 +143,14 @@ public class MenuPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void InsertDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_InsertDataButtonActionPerformed
+
         JPanel dp = new DataPanel();
         f.getContentPane().removeAll();
         f.add(dp);
         f.validate();
         f.pack();
+
+
     }//GEN-LAST:event_InsertDataButtonActionPerformed
 
     private void ExitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButtonActionPerformed
@@ -155,12 +158,27 @@ public class MenuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_ExitButtonActionPerformed
 
     private void VisualizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_VisualizeButtonActionPerformed
-        Nbody nbody = new Nbody();
-        JPanel vp = new VisualisationPanel3(nbody);
-        f.getContentPane().removeAll();
-        f.add(vp);
-        f.validate();
-        f.pack();
+
+        if (isSaved) {
+            Nbody nbody = new Nbody();
+            JPanel vp = new VisualisationPanel3(nbody);
+            f.getContentPane().removeAll();
+            f.add(vp);
+            f.validate();
+            f.pack();
+        } else {
+            int reply = JOptionPane.showConfirmDialog(null, "Nie podano danch wejściowych. Czy chcesz uruchomić animację dla dancyh testowych", "OSTRZEŻENIE", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                Nbody nbody = new Nbody();
+                JPanel vp = new VisualisationPanel3(nbody);
+                f.getContentPane().removeAll();
+                f.add(vp);
+                f.validate();
+                f.pack();
+            } else {
+
+            }
+        }
     }//GEN-LAST:event_VisualizeButtonActionPerformed
 
     private void SettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SettingsActionPerformed

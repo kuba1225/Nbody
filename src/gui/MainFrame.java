@@ -104,6 +104,7 @@ public class MainFrame extends javax.swing.JFrame {
             public void run() {
                 new MainFrame();
                 
+                
             }
         });
     }

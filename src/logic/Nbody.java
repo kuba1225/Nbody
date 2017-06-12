@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import static java.lang.Double.parseDouble;
 import java.util.ArrayList;
 import java.util.Scanner;
+import static gui.DataPanel.isSaved;
 
 /**
  *
@@ -22,7 +23,8 @@ import java.util.Scanner;
  */
 public class Nbody implements Observed {
 
-    int n = bodyNumber;
+    private int n = bodyNumber;
+
     private double[][] coordinates;
     private ArrayList<Observer> observators;
     public static final int DAY = 24 * 60 * 60;
@@ -33,11 +35,11 @@ public class Nbody implements Observed {
     public static PlanetList getPl() {
         return pl;
     }
-    
-    
-    
-    
+
     public Nbody() {
+        if(!isSaved){
+            n = 4;
+        }
         observators = new ArrayList<Observer>();
         coordinates = new double[n][3];
     }
@@ -66,8 +68,11 @@ public class Nbody implements Observed {
 
     public void findPosition(String fileIn, String fileOut, int dt, int pt) {
         pl = new PlanetList();
-        
-        
+        if (!isSaved) {
+            n = 4;
+            
+        }
+
         int i, j, u;
         int l = 0;
 
@@ -81,10 +86,9 @@ public class Nbody implements Observed {
         double rr = 0;
         double nrm = 0;
 
-        
         PrintWriter fileWrite = null;
         try {
-            fileWrite = new PrintWriter(new FileWriter("results.txt"));
+            fileWrite = new PrintWriter(new FileWriter(fileOut));
 
         } catch (IOException e) {
 
@@ -92,7 +96,7 @@ public class Nbody implements Observed {
 
         Scanner file = null;
         try {
-            file = new Scanner(new BufferedReader(new FileReader("data.txt")));
+            file = new Scanner(new BufferedReader(new FileReader(fileIn)));
             for (int it = 0; it < n; it++) {
                 Planet planet = new Planet(file.next(), parseDouble(file.next()), parseDouble(file.next()), parseDouble(file.next()), parseDouble(file.next()),
                         parseDouble(file.next()), parseDouble(file.next()), parseDouble(file.next()));
@@ -116,6 +120,7 @@ public class Nbody implements Observed {
         double[] m = new double[n];
 
         for (i = 0; i < n; i++) {
+
             m[i] = pl.getPlList().get(i).getMass();
             w[i][0] = pl.getPlList().get(i).getCoordinates(0);
             w[i][1] = pl.getPlList().get(i).getCoordinates(1);
@@ -123,8 +128,7 @@ public class Nbody implements Observed {
             v[i][0] = pl.getPlList().get(i).getVelocity(0);
             v[i][1] = pl.getPlList().get(i).getVelocity(1);
             v[i][2] = pl.getPlList().get(i).getVelocity(2);
-            //System.out.println("m="+m[i]+" x="+w[i][0]+" y="+w[i][1]+" "
-            //        + "z="+w[i][2]+" vx="+v[i][0]+" vy="+v[i][1]+" vz="+v[i][2]);
+           // System.out.println("m="+m[i]+" x="+w[i][0]+" y="+w[i][1]+" "+ "z="+w[i][2]+" vx="+v[i][0]+" vy="+v[i][1]+" vz="+v[i][2]);
         }
 
         int t = 0;
@@ -166,6 +170,7 @@ public class Nbody implements Observed {
             }
 
             for (i = 0; i < n; i++, l++) {
+                
                 coordinates[i][0] = w[i][0] - c[0][0];
                 coordinates[i][1] = w[i][1] - c[0][1];
                 coordinates[i][2] = w[i][2] - c[0][2];
@@ -197,6 +202,5 @@ public class Nbody implements Observed {
     public double[][] getResults() {
         return coordinates;
     }
-    
 
 }

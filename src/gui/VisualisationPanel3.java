@@ -7,6 +7,7 @@ package gui;
 
 import static gui.DataPanel.bodyNumber;
 import static gui.DataPanel.duration;
+import static gui.DataPanel.isSaved;
 import static gui.DataPanel.timeStep;
 import static gui.MainFrame.f;
 import java.awt.Color;
@@ -38,8 +39,9 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
     boolean checkIfFirst = true;
     boolean startStop = true;
     int n = bodyNumber;
+
     private double[][] coordinates;
-    private double[][] coordinates2D = new double[n][2];
+    private double[][] coordinates2D;
     private Nbody nbody;
     boolean start = false;
     Timer timer = new Timer(40, this);
@@ -57,6 +59,10 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
             }
         }
         initComponents();
+        if (!isSaved) {
+            n = 4;
+        }
+        coordinates2D = new double[n][2];
         coordinates = new double[n][2];
         this.nbody = nbody;
         try {
@@ -152,13 +158,20 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
     private void StartStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartStopButtonActionPerformed
         if (checkIfFirst) {
             StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pauseButton.png")));
-            nbody.findPosition("data.txt", "results.txt", timeStep, duration);
+            if (isSaved) {
+                nbody.findPosition("data.txt", "results.txt", timeStep, duration);
+            } else {
+
+                nbody.findPosition("testdata.txt", "results.txt", 20, 10000);
+
+            }
             checkIfFirst = false;
         }
         if (startStop) {
             start = true;
             StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pauseButton.png")));
             timer.start();
+
             startStop = false;
         } else {
             startStop = true;
@@ -182,7 +195,10 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (!isSaved) {
+            n = 4;
 
+        }
         for (int i = 0; i < n; i++) {
             coordinates[i][0] = parseDouble(file.next());
             coordinates[i][1] = parseDouble(file.next());
@@ -215,9 +231,14 @@ public class VisualisationPanel3 extends javax.swing.JPanel implements ActionLis
             g2d.setColor(Color.BLACK);
            
         }*/
+        if (!isSaved) {
+            n = 4;
+
+        }
         if (start) {
             super.paintComponent(g2d);
             for (int i = 0; i < n; i++) {
+
                 g2d.setColor(Color.BLACK);
                 Graphics2D g22d = (Graphics2D) g2d;
                 g2d.setColor(Color.white);

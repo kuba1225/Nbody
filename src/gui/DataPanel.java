@@ -11,13 +11,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
-import java.util.Scanner;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
+import static jdk.nashorn.internal.runtime.JSType.isNumber;
 
 /**
  *
@@ -25,7 +27,47 @@ import javax.swing.table.DefaultTableModel;
  */
 public class DataPanel extends javax.swing.JPanel {
 
-    static public int bodyNumber=0;
+    static public int bodyNumber = 0;
+    static public boolean isSaved = false;
+
+    private void saveFile() {
+        DefaultTableModel tableModel = (DefaultTableModel) PlanetDataTable.getModel();
+        PrintWriter plik = null;
+        String s;
+        try {
+            plik = new PrintWriter(new FileWriter("data.txt"));
+
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                    plik.print(tableModel.getValueAt(i, j) + " ");
+                }
+                plik.print("\n");
+            }
+
+        } catch (IOException e) {
+            System.err.println("Nieudany zapis do pliku!");
+        } finally {
+            if (plik != null) {
+                plik.close();
+            }
+        }
+
+        try {
+            duration = parseInt(DurationTextField.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(ef, "Nie podano długości trwania animacji", "NIEPOPRAWNE DANE WEJSCIOWE", JOptionPane.ERROR_MESSAGE);
+        }
+        try {
+            timeStep = parseInt(TimeStepTextField.getText());
+        } catch (NumberFormatException e) {
+
+            JOptionPane.showMessageDialog(ef, "Nie podano kroku czasowego", "NIEPOPRAWNE DANE WEJSCIOWE", JOptionPane.ERROR_MESSAGE);
+        }
+        DurationTextField.setText("");
+        TimeStepTextField.setText("");
+
+        isSaved = true;
+    }
 
     /**
      * Creates new form DataPanel
@@ -250,30 +292,7 @@ public class DataPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_TimeStepTextFieldActionPerformed
 
     private void SaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveButtonActionPerformed
-        DefaultTableModel tableModel = (DefaultTableModel) PlanetDataTable.getModel();
-        PrintWriter plik = null;
-        try {
-            plik = new PrintWriter(new FileWriter("data.txt"));
-
-            for (int i = 0; i < tableModel.getRowCount(); i++) {
-                for (int j = 0; j < tableModel.getColumnCount(); j++) {
-                    plik.print(tableModel.getValueAt(i, j) + " ");
-                }
-                plik.print("\n");
-            }
-
-        } catch (IOException e) {
-            System.err.println("Nieudany zapis do pliku!");
-        } finally {
-            if (plik != null) {
-                plik.close();
-            }
-        }
-        duration = parseInt(DurationTextField.getText());/////////////////////!!!!!!!!!!!!!!!WYJĄTEK GDY NIC NIE PODAMY
-        timeStep = parseInt(TimeStepTextField.getText());/////////////////////!!!!!!!!!!!!!!!WYJĄTEK GDY NIC NIE PODAMY
-
-        DurationTextField.setText("");
-        TimeStepTextField.setText("");
+        saveFile();
     }//GEN-LAST:event_SaveButtonActionPerformed
 
     private void XCoordinateTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_XCoordinateTextFieldActionPerformed
@@ -290,19 +309,31 @@ public class DataPanel extends javax.swing.JPanel {
 
     private void AddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButtonActionPerformed
         DefaultTableModel tableModel = (DefaultTableModel) PlanetDataTable.getModel();
-        tableModel.addRow(new Object[]{NameTextField.getText(), MassTextField.getText(), XCoordinateTextField.getText(), YCoordinateTextField.getText(), ZCoordinateTextField.getText(),
-            XVelocityTextField.getText(), YVelocityTextField.getText(), ZVelocityTextField.getText()});
+        if (NameTextField.getText().equals("") || MassTextField.getText().equals("") || XCoordinateTextField.getText().equals("")
+                || YCoordinateTextField.getText().equals("") || ZCoordinateTextField.getText().equals("")
+                || XVelocityTextField.getText().equals("") || YVelocityTextField.getText().equals("") || ZVelocityTextField.getText().equals("")) {
+            JOptionPane.showMessageDialog(ef, "Nie podano jednego z parametrów", "NIEPOPRAWNE DANE WEJSCIOWE", JOptionPane.WARNING_MESSAGE);
+        } else if (!isNumber(MassTextField.getText()) || !isNumber(XCoordinateTextField.getText().equals(""))
+                || !isNumber(YCoordinateTextField.getText().equals("")) || !isNumber(ZCoordinateTextField.getText().equals(""))
+                || !isNumber(XVelocityTextField.getText().equals("")) || !isNumber(YVelocityTextField.getText().equals("")) || !isNumber(ZVelocityTextField.getText().equals(""))) {
 
-        bodyNumber++;    
-        
-        NameTextField.setText("");
-        MassTextField.setText("");
-        XCoordinateTextField.setText("");
-        YCoordinateTextField.setText("");
-        ZCoordinateTextField.setText("");
-        XVelocityTextField.setText("");
-        YVelocityTextField.setText("");
-        ZVelocityTextField.setText("");
+            JOptionPane.showMessageDialog(ef, "Podany format dancyh wejściowych jest nieprawidłowy", "NIEPOPRAWNE DANE WEJSCIOWE", JOptionPane.WARNING_MESSAGE);
+        } else {
+
+            tableModel.addRow(new Object[]{NameTextField.getText(), MassTextField.getText(), XCoordinateTextField.getText(), YCoordinateTextField.getText(), ZCoordinateTextField.getText(),
+                XVelocityTextField.getText(), YVelocityTextField.getText(), ZVelocityTextField.getText()});
+
+            bodyNumber++;
+
+            NameTextField.setText("");
+            MassTextField.setText("");
+            XCoordinateTextField.setText("");
+            YCoordinateTextField.setText("");
+            ZCoordinateTextField.setText("");
+            XVelocityTextField.setText("");
+            YVelocityTextField.setText("");
+            ZVelocityTextField.setText("");
+        }
     }//GEN-LAST:event_AddButtonActionPerformed
 
     private void RemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RemoveButtonActionPerformed
@@ -322,35 +353,64 @@ public class DataPanel extends javax.swing.JPanel {
         //System.out.println(fileadress);
 
         Object tab[] = new Object[8];
-        Scanner file = null;
+        BufferedReader file = null;
         try {
-            file = new Scanner(new BufferedReader(new FileReader(fileadress)));
-            while (file.hasNext()) {
-                //for (int i = 0; i < tableModel.getRowCount(); i++) {
-                for (int i = 0; i < tableModel.getColumnCount(); i++) {
-                    if (file.hasNext()) {
-                        tab[i] = file.next();
+            file = new BufferedReader(new FileReader(fileadress));
+
+            String line;
+            LineNumberReader nr = new LineNumberReader(file);
+            while ((line = nr.readLine()) != null) {
+                String[] wrds = line.split("\\s+");
+                try {
+                    if (wrds.length < 8) {
+                        throw new NumberFormatException();
                     }
+                    for (int i = 1; i < 8; i++) {
+                        if (!isNumber(parseDouble(wrds[i]))) {
+                            throw new NumberFormatException();
+                        }
+                    }
+                    tableModel.addRow(wrds);
+                    bodyNumber++;
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(ef, "Linia " + nr.getLineNumber() + " została zignorowana");
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    JOptionPane.showMessageDialog(ef, "Linia " + nr + " została zignorowana");
                 }
-                tableModel.addRow(tab);
-                bodyNumber++;
             }
 
         } catch (IOException e) {
-            System.err.println("Nieudana próba otwarcia pliku!");
+            System.err.println("NIEUDANA PROBA OTWARCIA PLIKU!");
+            JOptionPane.showMessageDialog(ef, "NIEUDANA PROBA OTWARCIA PLIKU", "NIEUDANA PROBA OTWARCIA PLIKU", JOptionPane.ERROR_MESSAGE);
         } finally {
             if (file != null) {
-                file.close();
+                try {
+                    file.close();
+                } catch (IOException ex) {
+
+                }
             }
         }
 
     }//GEN-LAST:event_ChoseFileButtonActionPerformed
 
     private void MenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuButtonActionPerformed
-        JPanel mp = new MenuPanel();
-        f.getContentPane().removeAll();
-        f.add(mp);
-        f.validate();
+        if (isSaved) {
+            JPanel mp = new MenuPanel();
+            f.getContentPane().removeAll();
+            f.add(mp);
+            f.validate();
+        } else {
+            int reply = JOptionPane.showConfirmDialog(null, "Nie zapisano pliku. Czy chcesz wyjść do menu bez zapisywania?", "OSTRZEŻENIE", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.YES_OPTION) {
+                JOptionPane.showMessageDialog(null, "Nie zapisano dancyh");
+                JPanel mp = new MenuPanel();
+                f.getContentPane().removeAll();
+                f.add(mp);
+                f.validate();
+            } else {
+            }
+        }
     }//GEN-LAST:event_MenuButtonActionPerformed
 
 
@@ -389,4 +449,5 @@ public class DataPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
     static public int timeStep;
     static public int duration;
+    ErrorFrame ef = new ErrorFrame();
 }
