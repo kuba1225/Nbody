@@ -59,10 +59,18 @@ public class DataPanel extends javax.swing.JPanel {
         }
         try {
             timeStep = parseInt(TimeStepTextField.getText());
+            {
+                if (timeStep > duration) {
+                    throw new IllegalArgumentException();
+                }
+            }
         } catch (NumberFormatException e) {
 
             JOptionPane.showMessageDialog(ef, "Nie podano kroku czasowego", "NIEPOPRAWNE DANE WEJSCIOWE", JOptionPane.ERROR_MESSAGE);
+        } catch (IllegalArgumentException ee) {
+            JOptionPane.showMessageDialog(ef, "Podano krok czasowy dłuższy od czasu trwania animacji", "NIEPOPRAWNE DANE WEJSCIOWE", JOptionPane.ERROR_MESSAGE);
         }
+
         DurationTextField.setText("");
         TimeStepTextField.setText("");
 

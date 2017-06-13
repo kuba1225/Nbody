@@ -16,6 +16,7 @@ import static java.lang.Double.parseDouble;
 import java.util.ArrayList;
 import java.util.Scanner;
 import static gui.DataPanel.isSaved;
+import static java.lang.Math.abs;
 
 /**
  *
@@ -37,7 +38,7 @@ public class Nbody implements Observed {
     }
 
     public Nbody() {
-        if(!isSaved){
+        if (!isSaved) {
             n = 4;
         }
         observators = new ArrayList<Observer>();
@@ -70,7 +71,7 @@ public class Nbody implements Observed {
         pl = new PlanetList();
         if (!isSaved) {
             n = 4;
-            
+
         }
 
         int i, j, u;
@@ -89,6 +90,14 @@ public class Nbody implements Observed {
         PrintWriter fileWrite = null;
         try {
             fileWrite = new PrintWriter(new FileWriter(fileOut));
+
+        } catch (IOException e) {
+
+        }
+
+        PrintWriter fileWriteEnergy = null;
+        try {
+            fileWriteEnergy = new PrintWriter(new FileWriter("energyresults.txt"));
 
         } catch (IOException e) {
 
@@ -128,7 +137,7 @@ public class Nbody implements Observed {
             v[i][0] = pl.getPlList().get(i).getVelocity(0);
             v[i][1] = pl.getPlList().get(i).getVelocity(1);
             v[i][2] = pl.getPlList().get(i).getVelocity(2);
-           // System.out.println("m="+m[i]+" x="+w[i][0]+" y="+w[i][1]+" "+ "z="+w[i][2]+" vx="+v[i][0]+" vy="+v[i][1]+" vz="+v[i][2]);
+            // System.out.println("m="+m[i]+" x="+w[i][0]+" y="+w[i][1]+" "+ "z="+w[i][2]+" vx="+v[i][0]+" vy="+v[i][1]+" vz="+v[i][2]);
         }
 
         int t = 0;
@@ -170,7 +179,7 @@ public class Nbody implements Observed {
             }
 
             for (i = 0; i < n; i++, l++) {
-                
+
                 coordinates[i][0] = w[i][0] - c[0][0];
                 coordinates[i][1] = w[i][1] - c[0][1];
                 coordinates[i][2] = w[i][2] - c[0][2];
@@ -192,11 +201,47 @@ public class Nbody implements Observed {
                 coordinates[i][2] = 0;
             }
 
+            ////////////////////////////////////////////////////////////////////
+            double[][] Ep = new double[n][3];
+            double[] Epc = new double[n];
+            double[][] Ek = new double[n][3];
+            double[] Ekc = new double[n];
+            double[] Ec = new double[n];
+
+            /////////////////////////////ENERGIA_POTENCJALNA////////////////////
+            for (int g = 0; g < n; g++) {
+                for (int s = 0; s < n; s++) {
+                    for (int f = s + 1; f < n; f++) {
+                        Ep[g][0] += ((-1) * G) * ((m[s] * m[f]) / (abs(w[s][0] - w[f][0])));
+                        Ep[g][1] += ((-1) * G) * ((m[s] * m[f]) / (abs(w[s][1] - w[f][1])));
+                        Ep[g][2] += ((-1) * G) * ((m[s] * m[f]) / (abs(w[s][2] - w[f][2])));
+                    }
+                }
+                Epc[g] = norm(Ep[g][0], Ep[g][1], Ep[g][2]);
+            }
+
+            /////////////////////////////ENERGIA_KINETYCZNA/////////////////////
+            for (int it = 0; it < n; it++) {
+                Ek[it][0] = 0.5 * m[it] * (v[it][0] * v[it][0]);
+                Ek[it][1] = 0.5 * m[it] * (v[it][0] * v[it][1]);
+                Ek[it][2] = 0.5 * m[it] * (v[it][0] * v[it][2]);
+                Ekc[it] = norm(Ek[it][0], Ek[it][1], Ek[it][2]);
+            }
+
+            ////////////////////////////////////////////////////////////////////
+            for (int it = 0; it < n; it++) {
+                Ec[it] = Ekc[it] + Epc[it];
+            }
+
+            for (int g = 0; g < n; g++) {
+                fileWriteEnergy.println(Epc[g] + "  " + Ekc[g] + "  " + Ec[g]);
+            }
+
             t += dt;
 
         }
         fileWrite.close();
-
+        fileWriteEnergy.close();
     }
 
     public double[][] getResults() {

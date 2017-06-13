@@ -161,7 +161,7 @@ public class MenuPanel extends javax.swing.JPanel {
 
         if (isSaved) {
             Nbody nbody = new Nbody();
-            JPanel vp = new VisualisationPanel3(nbody);
+            JPanel vp = new VisualisationPanel(nbody);
             f.getContentPane().removeAll();
             f.add(vp);
             f.validate();
@@ -170,7 +170,7 @@ public class MenuPanel extends javax.swing.JPanel {
             int reply = JOptionPane.showConfirmDialog(null, "Nie podano danch wejściowych. Czy chcesz uruchomić animację dla dancyh testowych", "OSTRZEŻENIE", JOptionPane.YES_NO_OPTION);
             if (reply == JOptionPane.YES_OPTION) {
                 Nbody nbody = new Nbody();
-                JPanel vp = new VisualisationPanel3(nbody);
+                JPanel vp = new VisualisationPanel(nbody);
                 f.getContentPane().removeAll();
                 f.add(vp);
                 f.validate();

@@ -7,7 +7,7 @@ package gui;
 
 import static gui.MainFrame.f;
 import static gui.MainFrame.wybor;
-import static gui.VisualisationPanel3.resource;
+import static gui.VisualisationPanel.resource;
 import javax.swing.JPanel;
 
 /**

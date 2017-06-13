@@ -5,136 +5,82 @@
  */
 package gui;
 
+import static gui.DataPanel.bodyNumber;
 import static gui.DataPanel.duration;
+import static gui.DataPanel.isSaved;
 import static gui.DataPanel.timeStep;
+import static gui.MainFrame.f;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
+import java.net.URL;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 import javax.swing.Timer;
+import javax.swing.table.DefaultTableModel;
 import logic.Nbody;
-import logic.Observer;
+import static logic.Nbody.pl;
 
 /**
  *
  * @author Kuba
  */
-public class VisualisationPanel extends javax.swing.JPanel implements Observer, ActionListener {
+public class VisualisationPanel extends javax.swing.JPanel implements ActionListener {
 
-    int n = 5;
-    private double[][] coordinates;//= new double[n][3]
+    boolean checkIfFirst = true;
+    boolean startStop = true;
+    int n = bodyNumber;
+
+    private double[][] coordinates;
+    private double[][] coordinates2D;
+    private double[][] energy;
     private Nbody nbody;
-    private double xw;
-    private double yw;
     boolean start = false;
-    Timer timer;
+    Timer timer = new Timer(40, this);
+    double xw, yw;
     Scanner file = null;
-
-    private double[][] coordinates2D = new double[n][2];
-    int licznik = 0;
-
-    @Override
-    public void update(double[][] coordinates) {
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < 3; j++) {
-                this.coordinates[i][j] = coordinates[i][j];
-            }
-        }
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        int dt = 1;
-        int pt = 1440;
-        for (int t = 0; t < pt; t += 20) {
-            for (int i = 0; i < n; i++) {
-                coordinates[i][0] = parseDouble(file.next());
-                coordinates[i][1] = parseDouble(file.next());
-            }
-            System.out.println();
-
-            if (start) {
-                for (int i = 0; i < n; i++) {
-                    if (xw < coordinates[i][0]) {
-                        xw = coordinates[i][0];
-                    }
-                    if (yw < coordinates[i][1]) {
-                        yw = coordinates[i][1];
-                    }
-
-                    int xmax = GraphPanel.getWidth();
-                    int ymax = GraphPanel.getHeight();
-
-                    coordinates2D[i][0] = (xmax / 2) + ((coordinates[i][0] / abs(xw)) * (xmax / 2));
-                    coordinates2D[i][1] = (ymax / 2) - ((coordinates[i][1] / abs(yw)) * (ymax / 2));
-
-                    //coordinates2D[i][0] -= 20;
-                    //coordinates2D[i][1] -= 20;
-                    //System.out.println("Konwertuję współrzędne: x=\"" + coordinates2D[i][0] + "\"" + "  y=\"" + coordinates2D[i][1] + "\"");
-                    //System.out.println("test");
-                }
-                repaint();
-
-            }
-        }
-        timer.stop();
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        //System.out.println("test");
-        super.paintComponent(g);
-        if (start) {
-            Graphics2D g2d = (Graphics2D) GraphPanel.getGraphics();
-
-            //g2d.setColor(Color.WHITE);
-            //g2d.fillRect(0, 0, GraphPanel.getWidth(), GraphPanel.getHeight());
-            g2d.setColor(Color.BLACK);
-            drawCircle(g2d);
-        }
-    }
-
-    private void drawCircle(Graphics2D g2d) {
-        int x, y;
-
-        for (int i = 0; i < n; i++) {
-            x = (int) coordinates2D[i][0];
-            y = (int) coordinates2D[i][1];
-            System.out.println("Maluje w punkcie: x="+x+"  y="+y);
-            Ellipse2D.Double circle = new Ellipse2D.Double(x, y, 20, 20);
-            g2d.fill(circle);
-        }
-    }
-
-    public VisualisationPanel() {
-        initComponents();
-    }
+    Scanner fileEnergy = null;
+    private BufferedImage image;
+    static URL resource = null;
 
     public VisualisationPanel(Nbody nbody) {
+        if (resource != null) {
+            try {
+                image = ImageIO.read(resource);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         initComponents();
-        coordinates = new double[n][3];
+        if (!isSaved) {
+            n = 4;
+        }
+        coordinates2D = new double[n][2];
+        coordinates = new double[n][2];
+        energy = new double[n][3];
         this.nbody = nbody;
+        try {
+            file = new Scanner(new BufferedReader(new FileReader("results.txt")));
+        } catch (IOException ex) {
 
+        }
+        try {
+            fileEnergy = new Scanner(new BufferedReader(new FileReader("energyresults.txt")));
+        } catch (IOException ex) {
+
+        }
     }
 
-    public void stopObserve() {
-        nbody.removeObserver(this);
-    }
-
-    /**
-     * Creates new form VisualisationPanel
-     */
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -143,81 +89,222 @@ public class VisualisationPanel extends javax.swing.JPanel implements Observer, 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        GraphPanel = new javax.swing.JPanel();
-        StartButton = new javax.swing.JButton();
+        OptionPanel = new javax.swing.JPanel();
+        MenuButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TableEnergy = new javax.swing.JTable();
+        StabilisationPanel = new javax.swing.JPanel();
+        StartStopButton = new javax.swing.JButton();
 
-        GraphPanel.setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(0, 0, 0));
+        setForeground(new java.awt.Color(255, 255, 255));
 
-        javax.swing.GroupLayout GraphPanelLayout = new javax.swing.GroupLayout(GraphPanel);
-        GraphPanel.setLayout(GraphPanelLayout);
-        GraphPanelLayout.setHorizontalGroup(
-            GraphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 750, Short.MAX_VALUE)
-        );
-        GraphPanelLayout.setVerticalGroup(
-            GraphPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        OptionPanel.setBackground(new java.awt.Color(204, 204, 204));
 
-        StartButton.setText("Start");
-        StartButton.addActionListener(new java.awt.event.ActionListener() {
+        MenuButton.setText("Menu");
+        MenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                StartButtonActionPerformed(evt);
+                MenuButtonActionPerformed(evt);
             }
         });
+
+        TableEnergy.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Nazwa", "Ep", "Ek", "Ec"
+            }
+        ));
+        jScrollPane1.setViewportView(TableEnergy);
+
+        javax.swing.GroupLayout OptionPanelLayout = new javax.swing.GroupLayout(OptionPanel);
+        OptionPanel.setLayout(OptionPanelLayout);
+        OptionPanelLayout.setHorizontalGroup(
+            OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(OptionPanelLayout.createSequentialGroup()
+                .addContainerGap(9, Short.MAX_VALUE)
+                .addGroup(OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OptionPanelLayout.createSequentialGroup()
+                        .addComponent(MenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OptionPanelLayout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+        );
+        OptionPanelLayout.setVerticalGroup(
+            OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(OptionPanelLayout.createSequentialGroup()
+                .addGap(52, 52, 52)
+                .addComponent(MenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(16, 16, 16))
+        );
+
+        StabilisationPanel.setOpaque(false);
+        StabilisationPanel.setLayout(new java.awt.GridBagLayout());
+
+        StartStopButton.setBackground(new java.awt.Color(0, 51, 255));
+        StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/playButton.png"))); // NOI18N
+        StartStopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                StartStopButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = -31;
+        gridBagConstraints.ipady = -19;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 344, 0, 376);
+        StabilisationPanel.add(StartStopButton, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(GraphPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43)
-                .addComponent(StartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 47, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(StabilisationPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(OptionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(GraphPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(StartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(484, Short.MAX_VALUE))
+            .addComponent(OptionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(StabilisationPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void StartButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartButtonActionPerformed
+    private void StartStopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StartStopButtonActionPerformed
+        if (checkIfFirst) {
+            StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pauseButton.png")));
+            if (isSaved) {
+                nbody.findPosition("data.txt", "results.txt", timeStep, duration);
+            } else {
 
-        start = true;
-        int dt = timeStep;
-        int pt = duration;
-        //System.out.println(this.GraphPanel.getHeight() + "  " + this.GraphPanel.getWidth());
-        nbody.addObserver(this);
+                nbody.findPosition("testdata.txt", "results.txt", 20, 10000);
 
-        try {
-            file = new Scanner(new BufferedReader(new FileReader("rozw.txt")));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(VisualisationPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            checkIfFirst = false;
+        }
+        if (startStop) {
+            start = true;
+            StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pauseButton.png")));
+            timer.start();
+
+            startStop = false;
+        } else {
+            startStop = true;
+            StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/playButton.png")));
+            start = false;
+            timer.stop();
+
         }
 
-        //SwingUtilities.invokeLater(new Runnable() {
-        // public void run() {
-        nbody.findPosition("data.txt", "results.txt", 2, 10000);
-        //}
-        //});
 
-        timer = new Timer(5000, this);
+    }//GEN-LAST:event_StartStopButtonActionPerformed
 
-        timer.start();
+    private void MenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuButtonActionPerformed
+        JPanel mp = new MenuPanel();
+        f.getContentPane().removeAll();
+        f.add(mp);
+        f.validate();
+        f.pack();
+        repaint();
+    }//GEN-LAST:event_MenuButtonActionPerformed
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (!isSaved) {
+            n = 4;
 
-    }//GEN-LAST:event_StartButtonActionPerformed
+        }
+        
+        for (int i = 0; i < n; i++) {
+            coordinates[i][0] = parseDouble(file.next());
+            coordinates[i][1] = parseDouble(file.next());
+            energy[i][0] = parseDouble(fileEnergy.next());
+            energy[i][1] = parseDouble(fileEnergy.next());
+            energy[i][2] = parseDouble(fileEnergy.next());
+          
+        }
+        DefaultTableModel tableModel = (DefaultTableModel) TableEnergy.getModel();
+        for (int i = 0; i < n; i++) {
+            if (xw < coordinates[i][0]) {
+                xw = coordinates[i][0];
+            }
+            if (yw < coordinates[i][1]) {
+                yw = coordinates[i][1];
+            }
+
+            int xmax = this.getWidth() - OptionPanel.getWidth() - 20;
+            int ymax = this.getHeight() - 20;
+
+            coordinates2D[i][0] = (xmax / 2) + ((coordinates[i][0] / abs(xw)) * (xmax / 2));
+            coordinates2D[i][1] = (ymax / 2) - ((coordinates[i][1] / abs(yw)) * (ymax / 2));
+            
+            tableModel.setValueAt(pl.getPlList().get(i).getName(), i, 0);
+            tableModel.setValueAt(energy[i][0], i, 1);
+            tableModel.setValueAt(energy[i][1], i, 2);
+            tableModel.setValueAt(energy[i][2], i, 3);
+            
+            //System.out.println("x = "+coordinates2D[i][0]+" y = "+coordinates2D[i][1]);
+        }
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g2d) {
+        /*Graphics2D g22d = (Graphics2D) g2d;
+
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+            g2d.setColor(Color.BLACK);
+           
+        }*/
+        
+        
+        
+        if (!isSaved) {
+            n = 4;
+        }
+        if (start) {
+            super.paintComponent(g2d);
+            for (int i = 0; i < n; i++) {
+
+                g2d.setColor(Color.BLACK);
+                Graphics2D g22d = (Graphics2D) g2d;
+                g2d.setColor(Color.white);
+
+                if (resource == null) {
+                    Ellipse2D.Double circle = new Ellipse2D.Double(coordinates2D[i][0], coordinates2D[i][1], 30, 30);
+                    g22d.fill(circle);
+                } else {
+                    g2d.drawImage(image, (int) coordinates2D[i][0], (int) coordinates2D[i][1], this);
+                }
+                g2d.drawString(pl.getPlList().get(i).getName(), (int) coordinates2D[i][0] - 2, (int) coordinates2D[i][1] - 2);
+            }
+        }
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel GraphPanel;
-    private javax.swing.JButton StartButton;
+    private javax.swing.JButton MenuButton;
+    private javax.swing.JPanel OptionPanel;
+    private javax.swing.JPanel StabilisationPanel;
+    private javax.swing.JButton StartStopButton;
+    private javax.swing.JTable TableEnergy;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
 }
