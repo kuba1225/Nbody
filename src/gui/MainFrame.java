@@ -5,10 +5,7 @@
  */
 package gui;
 
-import static gui.DataPanel.duration;
-import static gui.DataPanel.timeStep;
 import javax.swing.JFrame;
-import logic.Nbody;
 
 /**
  *

@@ -11,6 +11,7 @@ import static gui.DataPanel.isSaved;
 import static gui.DataPanel.timeStep;
 import static gui.MainFrame.f;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -18,12 +19,15 @@ import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import static java.lang.Double.parseDouble;
 import static java.lang.Math.abs;
 import java.net.URL;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -95,6 +99,9 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
         MenuButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         TableEnergy = new javax.swing.JTable();
+        SaveGraphicButton = new javax.swing.JButton();
+        TimeStepLabel = new javax.swing.JLabel();
+        VisualisationLengthLabel = new javax.swing.JLabel();
         StabilisationPanel = new javax.swing.JPanel();
         StartStopButton = new javax.swing.JButton();
 
@@ -103,6 +110,7 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
 
         OptionPanel.setBackground(new java.awt.Color(204, 204, 204));
 
+        MenuButton.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         MenuButton.setText("Menu");
         MenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,6 +131,20 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
         ));
         jScrollPane1.setViewportView(TableEnergy);
 
+        SaveGraphicButton.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
+        SaveGraphicButton.setText("Zapisz grafikę");
+        SaveGraphicButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SaveGraphicButtonActionPerformed(evt);
+            }
+        });
+
+        TimeStepLabel.setBackground(new java.awt.Color(255, 255, 255));
+        TimeStepLabel.setForeground(new java.awt.Color(0, 0, 0));
+
+        VisualisationLengthLabel.setBackground(new java.awt.Color(255, 255, 255));
+        VisualisationLengthLabel.setForeground(new java.awt.Color(0, 0, 0));
+
         javax.swing.GroupLayout OptionPanelLayout = new javax.swing.GroupLayout(OptionPanel);
         OptionPanel.setLayout(OptionPanelLayout);
         OptionPanelLayout.setHorizontalGroup(
@@ -131,18 +153,28 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
                 .addContainerGap(9, Short.MAX_VALUE)
                 .addGroup(OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OptionPanelLayout.createSequentialGroup()
-                        .addComponent(MenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(38, 38, 38))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OptionPanelLayout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, OptionPanelLayout.createSequentialGroup()
+                        .addGroup(OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(MenuButton, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                            .addComponent(SaveGraphicButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(TimeStepLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(VisualisationLengthLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(38, 38, 38))))
         );
         OptionPanelLayout.setVerticalGroup(
             OptionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(OptionPanelLayout.createSequentialGroup()
                 .addGap(52, 52, 52)
-                .addComponent(MenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 220, Short.MAX_VALUE)
+                .addComponent(MenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(SaveGraphicButton, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(28, 28, 28)
+                .addComponent(TimeStepLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(VisualisationLengthLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(16, 16, 16))
         );
@@ -191,9 +223,14 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
             StartStopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pauseButton.png")));
             if (isSaved) {
                 nbody.findPosition("data.txt", "results.txt", timeStep, duration);
+                TimeStepLabel.setText("Krok czasowy: " + timeStep);
+                VisualisationLengthLabel.setText("Czas trwania wizualizacji: " + duration);
+
             } else {
 
                 nbody.findPosition("testdata.txt", "results.txt", 20, 10000);
+                TimeStepLabel.setText("Krok czasowy: " + 20 + " h");
+                VisualisationLengthLabel.setText("Długość symulacji: " + 10000 + " dni");
 
             }
             checkIfFirst = false;
@@ -224,20 +261,31 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
         repaint();
     }//GEN-LAST:event_MenuButtonActionPerformed
 
+    private void SaveGraphicButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SaveGraphicButtonActionPerformed
+        Container c = f.getContentPane();
+        BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        c.paint(im.getGraphics());
+        try {
+            ImageIO.write(im, "PNG", new File("graphicsscreenshot.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(VisualisationPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_SaveGraphicButtonActionPerformed
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isSaved) {
             n = 4;
 
         }
-        
+
         for (int i = 0; i < n; i++) {
             coordinates[i][0] = parseDouble(file.next());
             coordinates[i][1] = parseDouble(file.next());
             energy[i][0] = parseDouble(fileEnergy.next());
             energy[i][1] = parseDouble(fileEnergy.next());
             energy[i][2] = parseDouble(fileEnergy.next());
-          
+
         }
         DefaultTableModel tableModel = (DefaultTableModel) TableEnergy.getModel();
         for (int i = 0; i < n; i++) {
@@ -253,12 +301,12 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
 
             coordinates2D[i][0] = (xmax / 2) + ((coordinates[i][0] / abs(xw)) * (xmax / 2));
             coordinates2D[i][1] = (ymax / 2) - ((coordinates[i][1] / abs(yw)) * (ymax / 2));
-            
+
             tableModel.setValueAt(pl.getPlList().get(i).getName(), i, 0);
             tableModel.setValueAt(energy[i][0], i, 1);
             tableModel.setValueAt(energy[i][1], i, 2);
             tableModel.setValueAt(energy[i][2], i, 3);
-            
+
             //System.out.println("x = "+coordinates2D[i][0]+" y = "+coordinates2D[i][1]);
         }
         repaint();
@@ -273,9 +321,7 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
             g2d.setColor(Color.BLACK);
            
         }*/
-        
-        
-        
+
         if (!isSaved) {
             n = 4;
         }
@@ -302,9 +348,12 @@ public class VisualisationPanel extends javax.swing.JPanel implements ActionList
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton MenuButton;
     private javax.swing.JPanel OptionPanel;
+    private javax.swing.JButton SaveGraphicButton;
     private javax.swing.JPanel StabilisationPanel;
     private javax.swing.JButton StartStopButton;
     private javax.swing.JTable TableEnergy;
+    private javax.swing.JLabel TimeStepLabel;
+    private javax.swing.JLabel VisualisationLengthLabel;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

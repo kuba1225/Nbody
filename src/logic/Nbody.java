@@ -226,15 +226,17 @@ public class Nbody implements Observed {
                 Ek[it][1] = 0.5 * m[it] * (v[it][0] * v[it][1]);
                 Ek[it][2] = 0.5 * m[it] * (v[it][0] * v[it][2]);
                 Ekc[it] = norm(Ek[it][0], Ek[it][1], Ek[it][2]);
+               // System.out.println(v[it][0]+" "+v[it][1]+" "+v[it][2]);
             }
 
             ////////////////////////////////////////////////////////////////////
             for (int it = 0; it < n; it++) {
-                Ec[it] = Ekc[it] + Epc[it];
+                Ec[it] = (Ekc[it] + Epc[it]);
+                //System.out.println("Ekc = "+Ekc[it]+" Epc = "+Epc[it]+" Ec = "+Ec[it]);
             }
 
-            for (int g = 0; g < n; g++) {
-                fileWriteEnergy.println(Epc[g] + "  " + Ekc[g] + "  " + Ec[g]);
+            for (int iit = 0; iit < n; iit++) {
+                fileWriteEnergy.println(Epc[iit] + "  " + Ekc[iit] + "  " + Ec[iit]);
             }
 
             t += dt;
